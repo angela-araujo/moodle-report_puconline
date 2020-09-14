@@ -1,0 +1,104 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_puconline/overview
+
+    This template renders the form content area for the upload vimeo block.
+
+	Context variables required for this template:
+	    * heading - element name
+	    * url - url form
+
+    
+    Example context (json):
+    {
+        "tableheaders": ["heading 1", "heading 2"],
+        "courses": [["item1row 1", "item2row 1"],
+                      ["item1row 2", "item2row 2"]]
+    }
+}}
+<style>
+.col1 {	width: 20px; }
+.col2 {	padding-left: 0;	/*width: 60%;*/ }
+.col3 { }
+.col4 { }
+.col5 { width: 100px; }
+
+.node_category .contentnode{
+	list-style: none;
+    width: max-content;
+    float: left;
+    margin-right: 35px;
+}
+
+.tablemodules {
+	margin-left: 20px;
+}
+</style>
+
+<div id="report-puconline-{{uniqid}}" class="report-puconline block-cards" data-region="puconline" role="navigation">
+	<div class="card">
+		<div class="card-body">
+			{{{ formfilter }}}
+		</div>
+	</div>
+	<br>
+	{{#userfullname}}
+	<div class="card">
+		<div class="card-body">
+			<h1 class="card-title">{{#str}} title, report_puconline {{/str}}</h1><br>	
+			<h2 class="card-title"><a href="{{ profilelink }}">{{{userpix}}}{{ userfullname }}</a></h2><br>
+			
+			<section class="node_category card d-inline-block w-100 mb-3">
+			<div class="card-body">
+				<ul>
+					<li class="contentnode"><dl><dt>{{#str}} labelusername, report_puconline {{/str}}</dt><dd>{{ username }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labelcategory, report_puconline {{/str}}</dt><dd>{{ periodo }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labeltotalcourses, report_puconline {{/str}}</dt><dd>{{ totalcourses }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labeldatereport, report_puconline {{/str}}</dt><dd>{{ datereport }}</dd></dl></li>
+				</ul>
+			</div>
+			</section>
+			
+			{{#courses}}
+			<section class="node_category card d-inline-block w-100 mb-3">
+			<div class="card-body">
+				<ul>
+					<li class="contentnode"><dl><dt>{{#str}} labelcourse, report_puconline {{/str}}</dt><dd>{{ coursefullname }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labeldateenrol, report_puconline {{/str}}</dt><dd>{{ dateenrol }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labelstatusenrol, report_puconline {{/str}}</dt><dd>{{ userstatusname }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labelgroups, report_puconline {{/str}}</dt><dd>{{ groupsname }}</dd></dl></li>
+					<li class="contentnode"><dl><dt>{{#str}} labelgrade, report_puconline {{/str}}</dt><dd>{{ finalgrade }}</dd></dl></li>
+				</ul>
+				<div class="tablemodules">
+				{{{ tablemodules }}}
+				</div>
+			</div>
+			</section>
+			{{/courses}}			
+			
+			<div class="table-responsive">
+				{{{ table }}}
+			</div>
+		
+		</div>
+	</div>
+	{{/userfullname }}
+	<br>
+		
+
+</div>
