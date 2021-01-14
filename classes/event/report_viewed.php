@@ -52,8 +52,9 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the PUC ONLINE report for the user with id '$this->relateduserid' 
-in category id '$this->categoryid'.";
+        $objectname = get_string('eventreportviewed', 'report_puconline');
+        return "The user with id '$this->userid' viewed the $objectname for the user with id '$this->relateduserid' 
+in category id '{$this->other['categoryid']}'.";
     }
 
     /**
@@ -62,7 +63,7 @@ in category id '$this->categoryid'.";
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/report/puconline/index.php', array('userid' => $this->relateduserid, 'categoryid' => $this->categoryid));
+        return new \moodle_url('/report/puconline/index.php', array('userid' => $this->relateduserid, 'categoryid' => $this->other['categoryid']));
     }
 
 

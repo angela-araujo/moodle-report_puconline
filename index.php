@@ -60,20 +60,21 @@ $PAGE->set_heading(get_string('pluginname', 'report_puconline'));
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('pluginname', 'report_puconline'));
 
-
-// Trigger an report viewed event.
-$event = \report_puconline\event\report_viewed::create(array(
-    'context' => $context, 
-    'userid' => $USER->id,
-    'other' => array(
-        'relateduserid' => $userid, 
-        'categoryid' => $categoryid)    
-));
-$event->trigger();
+if ($userid and $categoryid) {
+    // Trigger an report viewed event.
+    $event = \report_puconline\event\report_viewed::create(array(
+        'context' => $context,
+        'userid' => $USER->id,
+        'relateduserid' => $userid,        
+        'other' => array(
+            'categoryid' => $categoryid,
+            )
+    ));
+    $event->trigger();
+}
 
 // Display header.
 echo $OUTPUT->header();
-
 
 // Filter form.
 $mform = new \report_puconline\local\filter_form($url);

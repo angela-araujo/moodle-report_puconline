@@ -37,7 +37,13 @@ defined('MOODLE_INTERNAL') || die;
  * @return bool
  */
 function report_puconline_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    $url = new moodle_url('/report/puconline/index.php', array('userid' => $user->id));
-    $node = new core_user\output\myprofile\node('reports', 'puconline', get_string('pluginname', 'report_puconline'), null, $url);
-    $tree->add_node($node);    
+    
+    if (has_capability('report/puconline:view', context_user::instance($user->id))) {
+        
+        $url = new moodle_url('/report/puconline/index.php', array('userid' => $user->id));
+        $node = new core_user\output\myprofile\node('reports', 'puconline', get_string('pluginname', 'report_puconline'), null, $url);
+        $tree->add_node($node); 
+        
+    }
+       
 }
