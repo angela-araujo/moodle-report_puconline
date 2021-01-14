@@ -53,21 +53,13 @@ require_login();
 $context = context_user::instance($USER->id);
 require_capability('report/puconline:view', $context);
 
+
 // Display page.
 $PAGE->set_course($COURSE);
 $PAGE->set_heading(get_string('pluginname', 'report_puconline'));
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('pluginname', 'report_puconline'));
 
-// Display filter form.
-$mform = new \report_puconline\local\filter_form($url);
-
-if ($categoryid <> -1) {
-    $mform->set_data(['categoryid' => $categoryid]);
-}
-if ($userid <> -1) {
-    $mform->set_data(['userid' => $userid]);
-}
 
 // Trigger an report viewed event.
 $event = \report_puconline\event\report_viewed::create(array(
@@ -79,12 +71,23 @@ $event = \report_puconline\event\report_viewed::create(array(
 ));
 $event->trigger();
 
-echo 'URL: <pre>'; print_r($url); echo '</pre>';
+// Display header.
+echo $OUTPUT->header();
 
-// Lets get the data report.
-$records = new stdClass();
 
-$records = \report_puconline\local\datareport::fetch_data_report($user, $category);
+// Filter form.
+$mform = new \report_puconline\local\filter_form($url);
+if ($userid <> -1) {
+    $mform->set_data(['userid' => $userid]);
+}
+if ($categoryid <> -1) {
+    $mform->set_data(['categoryid' => $categoryid]);
+}
+
+// Display Filter Form.
+$mform->display();
+
 $renderer = $PAGE->get_renderer('report_puconline');
-echo $renderer->display_report($records);
+echo $renderer->display_report($user, $category);
 
+echo $OUTPUT->footer();

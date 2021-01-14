@@ -51,11 +51,7 @@
 </style>
 
 <div id="report-puconline-{{uniqid}}" class="report-puconline block-cards" data-region="puconline" role="navigation">
-	<div class="card">
-		<div class="card-body">
-			{{{ formfilter }}}
-		</div>
-	</div>
+
 	<br>
 	{{#userfullname}}
 	<div class="card">
@@ -74,7 +70,7 @@
 			</div>
 			</section>
 			
-			{{#courses}}
+			{{# courses }}
 			<section class="node_category card d-inline-block w-100 mb-3">
 			<div class="card-body">
 				<ul>
@@ -84,8 +80,32 @@
 					<li class="contentnode"><dl><dt>{{#str}} labelgroups, report_puconline {{/str}}</dt><dd>{{ groupsname }}</dd></dl></li>
 					<li class="contentnode"><dl><dt>{{#str}} labelgrade, report_puconline {{/str}}</dt><dd>{{ finalgrade }}</dd></dl></li>
 				</ul>
-				<div class="tablemodules">
-				{{{ tablemodules }}}
+				
+				<div class="tablemodules">	
+					
+					<table class="table table-striped">
+						<thead>								
+							<th colspan="2">Atividade/Recurso</th>
+							<th>Último Acesso</th>
+							<th>Hits</th>
+							<th>Nota</th>
+							<th>Informações</th>
+						</thead>
+						{{# modules }}
+						<tr>
+							<td class="col1" valign="top">
+								<img class="icon icon" src="{{{icon_url}}}" alt="{{modulename}} {{cmname}}" title="Imagem {{modulename}}">
+							</td>
+							<td class="col2"> {{cmname}} </td>
+							<td class="col3"> {{lastaccess}} </td>
+							<td class="col4"> {{hits}} </td>
+							<td class="col5"> {{grade}}</td>
+							<td class="col6"> {{info}} </td>
+						</tr>
+						{{/ modules }}
+					</table>
+									
+				
 				</div>
 			</div>
 			</section>
