@@ -47,22 +47,6 @@ class filter_form extends \moodleform {
         
         $mform->addElement('header', 'filters', 'Filtro');
         
-        // Add element user.
-        $select = " deleted = 0 AND suspended = 0 ";
-        $listusers = $DB->get_records_select('user', $select, array(), 'firstname,lastname ASC', 'id,username,firstname,lastname,email');
-        $users = array();
-        
-        $users[-1] = '';//get_string('noselectionuser', 'report_puconline');
-        foreach ($listusers as $userid => $field) {
-            $users[$userid] = '[' . $field->username . '] ' . $field->firstname . ' ' . $field->lastname . ' ('. $field->email . ')';
-        }
-        $options = array(
-            'multiple' => false,
-            'noselectionstring' => get_string('noselectionuser', 'report_puconline'),
-        );
-        $mform->addElement('autocomplete', 'userid', get_string('userid', 'report_puconline'), $users, $options);
-        $mform->addRule('userid', null, 'required', null, 'client');
-        
         // Add element category PUC ONLINE YYYY.01.
         $options = array(            
             'multiple' => false,
@@ -84,11 +68,7 @@ class filter_form extends \moodleform {
     public function validation($data, $files){
         
         $errors = array();
-        /*
-        if ($data['userid'] == -1) {
-            $errors['userid'] = get_string('required');
-        }
-        */
+
         if ($data['categoryid'] == -1) {
             $errors['categoryid'] = get_string('required');
         }

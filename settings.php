@@ -25,10 +25,10 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+/*
 // Just a link to PUC ONLINE report.
 $ADMIN->add('reports', new admin_externalpage('reportpuconline', get_string('pluginname', 'report_puconline'),
         "$CFG->wwwroot/report/puconline/index.php", 'report/puconline:view'));
-
+*/
 // No report settings.
 $settings = null;

@@ -29,17 +29,12 @@ $userid = optional_param('userid', -1, PARAM_INT);
 $categoryid = optional_param('categoryid', -1, PARAM_INT);
 
 // Getting objects user and category passed from post.
-$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0), '*', IGNORE_MISSING);
+$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0), '*', MUST_EXIST);
 $category = $DB->get_record('course_categories', array('id' => $categoryid), '*', IGNORE_MISSING);
 
-$userid = (!$user)? -1: $user->id;
-$categoryid = (!$category)? -1: $category->id;
-
 $params = array();
+$params['userid'] = $user->id;
 
-if ($userid <> -1) {
-    $params['userid'] = $userid;
-}
 if ($categoryid <> -1) {
     $params['categoryid'] = $categoryid;
 }
@@ -53,19 +48,18 @@ require_login();
 $context = context_user::instance($USER->id);
 require_capability('report/puconline:view', $context);
 
-
 // Display page.
 $PAGE->set_course($COURSE);
 $PAGE->set_heading(get_string('pluginname', 'report_puconline'));
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('pluginname', 'report_puconline'));
 
-if ($userid and $categoryid) {
+if ($categoryid) {
     // Trigger an report viewed event.
     $event = \report_puconline\event\report_viewed::create(array(
         'context' => $context,
         'userid' => $USER->id,
-        'relateduserid' => $userid,        
+        'relateduserid' => $user->id,        
         'other' => array(
             'categoryid' => $categoryid,
             )
@@ -78,9 +72,7 @@ echo $OUTPUT->header();
 
 // Filter form.
 $mform = new \report_puconline\local\filter_form($url);
-if ($userid <> -1) {
-    $mform->set_data(['userid' => $userid]);
-}
+
 if ($categoryid <> -1) {
     $mform->set_data(['categoryid' => $categoryid]);
 }
