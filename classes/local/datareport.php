@@ -127,9 +127,9 @@ class datareport {
                 	LEFT JOIN {grade_grades} gg ON gg.itemid = gi.id AND gg.userid = ue.userid
                 WHERE c.visible = 1
                 AND ue.userid = :userid
-                AND c.category = :categoryid
+                AND (c.category = :categoryid OR cat.parent = :categoryidparent)
                 ORDER BY c.fullname";
-        return $DB->get_records_sql($sql, ['userid' => $userid, 'categoryid' => $categoryid]);
+        return $DB->get_records_sql($sql, ['userid' => $userid, 'categoryid' => $categoryid, 'categoryidparent' => $categoryid]);
     }
     
 
