@@ -146,7 +146,8 @@ class datareport {
                     ON gi.courseid = c.id AND gi.itemtype = 'course'
              LEFT JOIN {grade_grades} gg 
                     ON gg.itemid = gi.id AND gg.userid = ue.userid
-                 WHERE c.visible = 1
+                 WHERE 1 = 1
+                   -- AND c.visible = 1
                    AND ue.userid = :userid
                    AND (c.category = :categoryid OR cat.parent = :categoryidparent)
                  ORDER BY c.fullname";

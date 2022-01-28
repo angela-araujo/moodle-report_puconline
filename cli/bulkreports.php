@@ -36,8 +36,8 @@ require_once("$CFG->dirroot/report/puconline/lib.php");
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
-    array('category' => null, 'verbose'=>false, 'help'=>false), 
-    array('c' => 'category', 'v'=>'verbose', 'h'=>'help'));
+    array('category' => null, 'verbose'=>false, 'help'=>false, 'page' => -1), 
+    array('c' => 'category', 'v'=>'verbose', 'h'=>'help', 'p' => 'page'));
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -48,16 +48,17 @@ $help =
 "Execute report puconline bulkreports.
     
 Options:
--c, --category        Category information
--v, --verbose         Print verbose progess information
 -h, --help            Print out this help
+-c, --category        Category information
+-p, --page            Page (100 records per page)
+-v, --verbose         Print verbose progess information
     
 Example:
 \$sudo -u www-data /usr/bin/php report/puconline/cli/bulkreports.php --verbose --category=123
-    
-or
-    
+\$sudo -u www-data /usr/bin/php report/puconline/cli/bulkreports.php --verbose --category=123 --page=1
+or    
 \$sudo -u www-data /usr/bin/php report/puconline/cli/bulkreports.php -v -c=123
+\$sudo -u www-data /usr/bin/php report/puconline/cli/bulkreports.php -v -c=123 -p=1
     
 ";
 
@@ -68,10 +69,11 @@ if ($options['help']) {
 
 $verbose = !empty($options['verbose']);
 $category = $options['category'];
+$page = $options['page']? $options['page']:-1;
 
 if (!empty($category)) {
 
-    $result = report_puconline_bulk_pdf($category, $verbose);    
+    $result = report_puconline_bulk_pdf($category, $verbose, $page);    
     exit();
     
 } else {

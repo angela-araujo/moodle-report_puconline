@@ -28,6 +28,8 @@ use report_puconline\datareport;
 
 defined('MOODLE_INTERNAL') || die;
 
+define('STUDENT_PER_PAGE', 100);
+
 /**
  * Add nodes to myprofile page.
  *
@@ -57,8 +59,10 @@ function report_puconline_myprofile_navigation(core_user\output\myprofile\tree $
  * @param boolean $verbose
  * @return boolean
  */
-function report_puconline_bulk_pdf(int $categoryid, $verbose = false) {
+function report_puconline_bulk_pdf(int $categoryid, $verbose = false, int $page = -1) {
     global $DB, $COURSE, $PAGE;
+    
+    $is_paginated = ($page > 0 )? true: false;
     
     $category = $DB->get_record('course_categories', array('id' => $categoryid), '*', IGNORE_MISSING);
     
@@ -77,7 +81,24 @@ function report_puconline_bulk_pdf(int $categoryid, $verbose = false) {
         }        
         return false;
     } else {
+        
         $count_students = count($students);
+        
+        if ($is_paginated) {
+            
+            $totalpage = ceil($count_students/STUDENT_PER_PAGE);
+            
+            if ( !(($page >= 1) and ($page <= $totalpage)) ) {
+                if ($verbose) {
+                    mtrace('Error: The page must be in the range 1 - ' . $totalpage);
+                }
+                return false;
+            } else {
+                $index_start = (($page - 1) * STUDENT_PER_PAGE) + 1;
+                $index_end = $index_start + (STUDENT_PER_PAGE - 1);
+            }
+        }
+        
         if ($verbose) {
             mtrace(date('Y-m-d H:i:s') . ' Start \''. get_string('pluginname', 'report_puconline') . '\' for '. 
                 $count_students . ' students in PDF format [Category: ' . $category->id . ' - ' . $category->name. ']') ;
@@ -88,18 +109,31 @@ function report_puconline_bulk_pdf(int $categoryid, $verbose = false) {
     $PAGE->set_course($COURSE);
     $PAGE->set_heading(get_string('pluginname', 'report_puconline'));
     $PAGE->set_pagelayout('print');
-    $PAGE->set_title(get_string('pluginname', 'report_puconline'));        
-    $renderer = $PAGE->get_renderer('report_puconline');    
+    $PAGE->set_title(get_string('pluginname', 'report_puconline'));
+    $renderer = $PAGE->get_renderer('report_puconline');
     
     $i = 0;
     
     foreach ($students as $s) {
         
-        if ($verbose) {
-            mtrace('  student ' . ++$i . '/' . $count_students . ': ' . $s->username . '-' . $s->firstname . ' ' . $s->lastname);
+        ++$i;
+        
+        if ($is_paginated) {
+            if (!($i >= $index_start and $i <= $index_end)) {
+                continue;
+            }
         }
-        $data_report = $renderer->pdf_report($s, $category);
-        create_pdf($data_report, $s, $category);
+        
+        if ($verbose) {
+            mtrace('  student ' . $i . '/' . $count_students . ': ' . $s->username . '-' . $s->firstname . ' ' . $s->lastname);
+        }
+        if ($data_report = $renderer->pdf_report($s, $category)) {
+            create_pdf($data_report, $s, $category);
+        } else {
+            if ($verbose) {
+                mtrace('  ' . $s->username . '-' . $s->firstname . ' ' . $s->lastname . ' no data.');
+            }
+        }
     }
     
     if ($verbose) {
