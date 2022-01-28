@@ -39,12 +39,11 @@ class datareport {
     
     public static function fetch_data_report($user , $category) {
         
-        global $CFG;    
+        global $CFG;
         
         require_once("$CFG->libdir/gradelib.php");
         
         $data = new \stdClass();
-        
         
         if (is_object($user) and is_object($category)) {
         
@@ -65,9 +64,10 @@ class datareport {
                     
                     $modules = self::get_modules_course($course->courseid, $user->id);
                     
+                    $course->finalgrade = number_format($course->finalgrade, 2);
                     $course->groupsname = implode(",", $listgroup);
                     $course->modules = $modules;
-                                    
+                    
                     $_courses[] = $course;
                 }
                 
@@ -95,14 +95,15 @@ class datareport {
      */
     protected static function get_groups($courseid, $userid) {
         global $DB;
-        $sql = "SELECT g.id groupid, g.name groupname
-                FROM {groups} g 
-                	INNER JOIN {groups_members} gm ON g.id = gm.groupid
-                WHERE g.courseid = :courseid
-                AND gm.userid = :userid
-                ORDER BY groupname";
+        $sql = "
+                SELECT g.id groupid, g.name groupname
+                  FROM {groups} g 
+            INNER JOIN {groups_members} gm 
+                    ON g.id = gm.groupid
+                 WHERE g.courseid = :courseid
+                   AND gm.userid = :userid
+                 ORDER BY groupname";
         return $DB->get_records_sql($sql, ['courseid' => $courseid, 'userid' => $userid]);
-        
     }
     
     /**
@@ -114,24 +115,43 @@ class datareport {
      */
     protected static function get_courses($userid, $categoryid) {
         global $DB;
-        $sql = "SELECT c.id courseid, c.shortname, c.fullname coursefullname, c.category, cat.name categoryname,
-                	ue.userid, ue.status,
-                	case when ue.status = 0 then 'ATIVO' ELSE 'SUSPENSO' END userstatusname,
-                	FROM_UNIXTIME(CASE WHEN ue.timestart = 0 THEN ue.timecreated ELSE ue.timestart END, '%d/%m/%Y %H:%i') dateenrol,
-                    gg.finalgrade
-                FROM {course} c
-                	INNER JOIN {course_categories} cat ON c.category = cat.id
-                	INNER JOIN {enrol} e ON c.id = e.courseid
-                	INNER JOIN {user_enrolments} ue ON ue.enrolid = e.id
-                    LEFT JOIN {grade_items} gi ON gi.courseid = c.id AND gi.itemtype = 'course'
-                	LEFT JOIN {grade_grades} gg ON gg.itemid = gi.id AND gg.userid = ue.userid
-                WHERE c.visible = 1
-                AND ue.userid = :userid
-                AND (c.category = :categoryid OR cat.parent = :categoryidparent)
-                ORDER BY c.fullname";
+        $sql = "SELECT c.id courseid, 
+                       c.shortname, 
+                       c.fullname coursefullname, 
+                       c.category, 
+                       cat.name categoryname,
+                       ue.userid, 
+                       ue.status,
+                       CASE 
+                            WHEN ue.status = 0 
+                            THEN 'ATIVO' 
+                            ELSE 'SUSPENSO' 
+                       END userstatusname,
+                       FROM_UNIXTIME(
+                            CASE 
+                                WHEN ue.timestart = 0 
+                                THEN ue.timecreated 
+                                ELSE ue.timestart 
+                            END, '%d/%m/%Y %H:%i'
+                       ) dateenrol,
+                       gg.finalgrade
+                  FROM {course} c
+            INNER JOIN {course_categories} cat 
+                    ON c.category = cat.id
+            INNER JOIN {enrol} e 
+                    ON c.id = e.courseid
+            INNER JOIN {user_enrolments} ue 
+                    ON ue.enrolid = e.id
+             LEFT JOIN {grade_items} gi 
+                    ON gi.courseid = c.id AND gi.itemtype = 'course'
+             LEFT JOIN {grade_grades} gg 
+                    ON gg.itemid = gi.id AND gg.userid = ue.userid
+                 WHERE c.visible = 1
+                   AND ue.userid = :userid
+                   AND (c.category = :categoryid OR cat.parent = :categoryidparent)
+                 ORDER BY c.fullname";
         return $DB->get_records_sql($sql, ['userid' => $userid, 'categoryid' => $categoryid, 'categoryidparent' => $categoryid]);
     }
-    
 
     /**
      * Get all modules from course and user
@@ -151,7 +171,7 @@ class datareport {
         global $DB, $CFG;
         
         $modinfo = get_fast_modinfo($courseid, $userid);
-        $cms = $modinfo->get_cms();        
+        $cms = $modinfo->get_cms();
         
         $modules = array();
         
@@ -166,7 +186,7 @@ class datareport {
             $mod->modulename = $cm->modfullname; // e.g. Fórum
             $mod->cmname = $cm->name; // e.g. Notícias e Avisos
             $mod->moduletypename = $cm->modname; // e.g. forum
-            $mod->icon_url = $cm->get_icon_url();            
+            $mod->icon_url = $cm->get_icon_url();
             
             $nota = false;
             $gradesinfo = grade_get_grades($courseid, 'mod', $cm->modname, $cm->instance, $userid);
@@ -209,7 +229,7 @@ class datareport {
                 }
                 
                 if (!empty($output->info)) {
-                    $string_grade = get_string('grade') . ': ' . $mod->grade;
+                    $string_grade = get_string('labelgrade', 'report_puconline') . ': ' . $mod->grade;
                     $mod->info = str_replace($string_grade, '', $output->info);
                 }
                 
@@ -217,10 +237,48 @@ class datareport {
             
             $modules[] = $mod;
             
-            unset($mod);            
+            unset($mod);
         }
         return $modules;
     }
+    
+    /**
+     * Get all students of a category (with any status).
+     * 
+     * @param int $category
+     * @return array of users (roleid = 5)
+     */
+    public static function get_students(int $category) {
+        global $DB;
+        
+        $sql = "
+               SELECT DISTINCT u.*
+                 FROM {course} c 
+                 JOIN {course_categories} cat 
+                   ON cat.id = c.category
+                 JOIN {enrol} e 
+                   ON e.courseid = c.id AND e.status = 0
+                 JOIN {user_enrolments} ue 
+                   ON ue.enrolid = e.id AND ue.status = 0
+                 JOIN {user} u 
+                   ON u.id = ue.userid	
+                 JOIN {context} AS ctx 
+                   ON ctx.contextlevel = 50 AND ctx.instanceid = c.id
+                 JOIN {role_assignments} AS ra 
+                   ON ra.contextid = ctx.id AND ra.userid = ue.userid AND ra.roleid = 5
+                WHERE (cat.id = :categoryid OR cat.parent = :categoryidparent)
+            ORDER BY u.firstname, u.lastname";
+        
+        $params = array(
+            'categoryid' => $category,
+            'categoryidparent' => $category
+        );
+        
+        $studies = $DB->get_records_sql($sql, $params);
+        
+        return $studies;
+    }
+    
     
     
 }

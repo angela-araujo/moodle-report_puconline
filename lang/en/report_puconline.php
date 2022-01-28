@@ -30,8 +30,8 @@ $string['pluginname'] = 'Jornada de Aprendizado do Aluno';
 // Filter form.
 $string['userid'] = 'Aluno(a)';
 $string['category'] = 'Período';
-$string['noselectionuser'] = ' Selecione um aluno ';
-$string['noselectioncat'] = ' Selecione uma categoria ';
+$string['noselectionuser'] = ' Selecione um aluno';
+$string['noselectioncat'] = ' Selecione uma categoria';
 
 
 // Report Overview.

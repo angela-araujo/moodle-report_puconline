@@ -45,7 +45,7 @@ class filter_form extends \moodleform {
         
         $mform = $this->_form;        
         
-        $mform->addElement('header', 'filters', 'Filtro');
+        $mform->addElement('header', 'filters', 'Filtro', '');
         
         // Add element category PUC ONLINE YYYY.01.
         $options = array(            

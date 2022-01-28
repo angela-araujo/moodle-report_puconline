@@ -29,11 +29,16 @@ class report_puconline_renderer extends plugin_renderer_base {
         
         $data = new stdClass();
         $data = \report_puconline\local\datareport::fetch_data_report($user, $category);
-
-        //\core\dataformat::download_data($filename, $dataformat, $columns, $iterator);
-        
-        echo $this->render_from_template('report_puconline/overview', $data);
+        return $this->render_from_template('report_puconline/overview', $data);
         
     }   
+    
+    public function pdf_report($user, $category) {
         
+        $data = new stdClass();
+        $data = \report_puconline\local\datareport::fetch_data_report($user, $category);
+        return $this->render_from_template('report_puconline/pdf_overview', $data);
+        
+    }
+
 }

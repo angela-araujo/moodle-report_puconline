@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2020100600;    // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2022012700;    // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2019111200;    // Requires this Moodle version
 $plugin->component = 'report_puconline';  // Full name of the plugin (used for diagnostics)
 $plugin->maturity = MATURITY_ALPHA;

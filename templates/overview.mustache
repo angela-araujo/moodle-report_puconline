@@ -26,9 +26,30 @@
     
     Example context (json):
     {
-        "tableheaders": ["heading 1", "heading 2"],
-        "courses": [["item1row 1", "item2row 1"],
-                      ["item1row 2", "item2row 2"]]
+        "userid": "123",
+        "userfullname": "Bart Simpson",
+        "profilelink": "https://localhost/moodle/user/view.php?id=5",
+        "username": "teste_bart",
+        "periodo": "2021.1",
+        "datereport": "22/01/2022 16:12",
+        "totalcourses": "2",
+        "courses": [ 
+        {
+            "groupsname": "1CA,1AB", 
+            "modules": [
+                { 
+                    "cmid": "456",
+                    "modulename": "Tarefa",
+                    "cmname": "Avaliação - G1",
+                    "moduletypename": "assign",
+                    "icon_url": "http://xxxx.com/image.jpg",
+                    "grade": "9.5",
+                    "lastaccess": "13/08/2021 (162 dias 1 hora)",
+                    "info": "-"
+                }
+            ],
+        }
+        ]    
     }
 }}
 <style>

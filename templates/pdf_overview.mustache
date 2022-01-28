@@ -1,0 +1,153 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_puconline/pdf_overview
+
+    This template renders the form content area for the upload vimeo block.
+
+	Context variables required for this template:
+	    * heading - element name
+	    * url - url form
+
+    
+    Example context (json):
+    {
+        "userid": "123",
+        "userfullname": "Bart Simpson",
+        "profilelink": "https://localhost/moodle/user/view.php?id=5",
+        "username": "teste_bart",
+        "periodo": "2021.1",
+        "datereport": "22/01/2022 16:12",
+        "totalcourses": "2",
+        "courses": [ 
+        {
+            "groupsname": "1CA,1AB", 
+            "modules": [
+                { 
+                    "cmid": "456",
+                    "modulename": "Tarefa",
+                    "cmname": "Avaliação - G1",
+                    "moduletypename": "assign",
+                    "icon_url": "http://xxxx.com/image.jpg",
+                    "grade": "9.5",
+                    "lastaccess": "13/08/2021 (162 dias 1 hora)",
+                    "info": "-"
+                }
+            ],
+        }
+        ]    
+    }
+    
+}}
+<style>
+    .cart-title {
+        font-size: 12px;
+    }
+    .node_category .contentnode{
+    	list-style: none;
+        width: max-content;
+        float: left;
+        margin-right: 35px;
+    }
+    
+    .tablemodules {
+    	margin-left: 20px;
+    }
+</style>
+
+<div id="report-puconline-{{uniqid}}" class="report-puconline block-cards" data-region="puconline" role="navigation">
+
+	{{#userfullname}}
+	<h1 class="card-title">{{#str}} title, report_puconline {{/str}}</h1><br>	
+	<h2 class="card-title">{{ userfullname }}</h2><br>
+	
+	<div style="margin-bottom: 15px;border: 0.3px solid gray;">
+        <table style="">
+            <tr>
+                <td width="80"><b>{{#str}} labelusername, report_puconline {{/str}}</b></td>
+                <td width="50"><b>{{#str}} labelcategory, report_puconline {{/str}}</b></td>
+                <td width="90"><b>{{#str}} labeltotalcourses, report_puconline {{/str}}</b></td>
+                <td width="90"><b>{{#str}} labeldatereport, report_puconline {{/str}}</b></td>
+            </tr>
+            <tr>
+                <td>{{ username }}</td>
+                <td>{{ periodo }}</td>
+                <td>{{ totalcourses }}</td>
+                <td>{{ datereport }}</td>
+            </tr>
+        </table>
+	</div>
+    
+	<br/>
+
+	{{# courses }}
+    <div style="border:0.5px solid gray; padding-top: 15px;">
+    <table border="0" cellspacing="0" cellpadding="0">
+        <tr style="font-size: 8px; font-weight: 700;">
+            <td width="250"><b>{{#str}} labelcourse, report_puconline {{/str}}</b></td>
+            <td width="70"><b>{{#str}} labeldateenrol, report_puconline {{/str}}</b></td>
+            <td width="40"><b>{{#str}} labelstatusenrol, report_puconline {{/str}}</b></td>
+            <td width="120"><b>{{#str}} labelgroups, report_puconline {{/str}}</b></td>
+            <td width="350"><b>{{#str}} labelgrade, report_puconline {{/str}}</b></td>
+        </tr>
+        <tr>
+            <td>{{ coursefullname }}</td>
+            <td>{{ dateenrol }}</td>
+            <td>{{ userstatusname }}</td>
+            <td>{{ groupsname }}</td>
+            <td>{{ finalgrade }}</td>
+        </tr>
+        
+        <tr>
+            <td colspan="5">
+                <div style="">        
+                    <table border="0" cellspacing="0" cellpadding="0" >
+                        <tr style="border:0.5px solid gray;">
+                            <td width="220" colspan="2"><b>Atividade/Recurso</b></td>
+                            <td width="110" ><b>Último Acesso</b></td>
+                            <td width="30" ><b>Hits</b></td>
+                            <td width="60" ><b>Nota</b></td>
+                            <td width="100" ><b>Informações</b></td>
+                        </tr>
+                        {{# modules }}
+                        <tr>
+                            <td width="20" class="col1" valign="top">
+                                <!-- <img width="50" height="50" border="0" src="{{{icon_url}}}" alt="{{modulename}} {{cmname}}" title="Imagem {{modulename}}">  -->
+                                <img width="50" height="50" border="0" src="icon.jpg" alt="{{modulename}} {{cmname}}" title="Imagem {{modulename}}"> 
+                            </td>
+                            <td width="200"> {{cmname}} </td>
+                            <td > {{lastaccess}} </td>
+                            <td > {{hits}} </td>
+                            <td > {{grade}}</td>
+                            <td > {{info}} </td>
+                        </tr>
+                        {{/ modules }}
+                    </table>
+                </div>
+            </td>
+        
+        </tr>
+        
+    </table>
+    </div>
+	{{/courses }}
+			
+	{{/userfullname }}
+	<br>
+		
+
+</div>
